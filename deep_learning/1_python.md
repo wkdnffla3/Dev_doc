@@ -348,5 +348,81 @@ array([51, 55])
 [14 19]
 [0 4]
 
+#다차원 배열을 1차원 배열로 변환 가능
+>>> X = X.flatten()
+>>> print(x)
+[51 55 14 19 0 4]
 
+>>> X[np.array([0,2,4])]    #인덱스가 0,2,4인 원소 얻기
+array([51, 14, 0])
+
+#특정 조건을 만족하는 원소만 얻을수도 있다.
+>>> X>15
+array([true,true,False,true,False,False],dtype = bool) #처음 나온 값은 BOOL형 배열 이다.
+
+>>> X[X>15]
+aray([51,55,19])
+
+```
+
+***
+
+1.6 matplotlib
+
+    - matplotlib은 그래프를 그려주는 라이브러리다!
+    - 데이터의 시각화가 쉬워진다!
+
+1.6.1 단순한 그래프 그리기
+
+    - 그래프를 그리려면 matplotlib의 pyplot 모듈을 이용합니다.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+#데이터 준비
+x = np.arange(0,6,0.1) # 0에서 6까지가 0.1 간격으로 생성
+y = np.sin(x)
+
+#그래프 그리기
+plt.plot(x,y)
+plt.show()
+```
+
+1.6.2 pyplot의 기능
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+#데이터 준비
+x = np.arrange(0, 6, 0.1) #0에서 6까지 0.1 간격으로 생성!
+y1 = np.sin(x)
+y2 = np.cos(x)
+
+#그래프 그리기
+plt.plot(x, y1, label="sin")
+plt.plot(x,y2, linestyle="--",label="cos") #cos 함수는 점선으로 설정
+
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title('sin & cos')
+
+plt.legend()
+plt.show()
+```
+
+1.6.3 이미지 표시하기
+
+    - pyplot에는 이미지를 표시해주는 메서드인 imshow()가 존재
+    - 이미지를 읽어들일 때는 matplotlib, image 모듈의 imread() 메서드를 사용
+
+```python
+import matplotlib.pyplot as plt
+from matplotlib.image import imread
+
+img = imread('cactus.png') # 이미지 읽어오기
+
+plt.imsohw(img)
+plt.show()
 ```
