@@ -187,4 +187,190 @@
     단계별로 코드 구현!
 
     함수를 가져오고 함수의 입력을 가져온다 함수의 backward 메서드를 호출한다.
+<<<<<<< HEAD
 
+=======
+    함수를 가져온다.
+    함수의 입력을 가져온다.
+    함수의 backward 메서드를 호출한다.
+
+## 7.3 backward 메서드 추가
+
+    아까 보여준 코드에는 앞의 변수로 거슬러 올라가는 로직을 보여줬다.
+    이제 자동화 해서 보여준다.
+
+#   8. 재귀에서 반복문으로
+
+
+## 8.1 현재의 Variable 클래스
+
+    처리 효율을 개선하고 앞으로의 확장을 대비해 backward 메서드의 구현 방식을 바꿔본다.
+
+    이전장에서 우리는 variable 클래스의 backward 메서드를 다음과 같이 구현했다.
+
+```python
+    class Variable:
+        #생략
+
+        def backward(self):
+            f = self.creator
+            if f is not None:
+                x = f.input
+                x.grad = f.backward(self.grad)
+                x.backward()
+```
+
+    이부분에서 backward() 메서드를 계속해서 호출하는 재귀 형식이 계속 나온다.
+
+## 8.2 반복문을 이용한 구현
+
+    재귀를 사용한 구현을 반복문을 이용한 구현으로 바꿔본다.
+
+``` python
+
+    class Variable:
+
+
+        def backward(self):
+            funcs = [self.creator]
+
+            while funcs:
+                f = funcs.pop()
+                x,y = f.input. f.output
+                x.grad = f.backward(y.grad)
+
+                if x.creator is not Non:
+                    funcs.append(x.creator)
+    
+```
+
+    반복문을 이용해 구현하였다.
+    funcs 라는 리스트에 차례로 집어넣는다.
+
+## 8.3 동작 확인
+
+    코드는 잘 동작 한다.
+
+# 9. 함수를 더 편리하게
+
+    DeZero가 역전파를 할수 있게 되었다.
+    Define by run 이라고 하는 전체 계산의 각 조각들을 런타임에 연결 해내는 능력도 갖췄다.
+    하지만 사용하기 조금 불편한 부분이 있어서 이번 단계에서는 DeZero의 함수에 세가지 개선을 추가하겠습니다.
+
+## 9.1 파이썬 함수로 이용하기
+
+    지금까지 DeZero는 함수를 파이썬 클래스로 정의했지만 함수로도 정의가 가능하다.
+
+```python
+    def square(x):
+        f = Square()
+        return f(x)
+
+    def exp(x):
+        f = Exp()
+        return f(x)
+```
+    혹은 다음과 같이 구현이 가능하다.
+
+```python
+    def square(x):
+        return Square()(x)
+
+    def exp(x):
+        return Exp()(x)
+```
+    이렇게 구현을 했을때도 잘 동작을 한다.
+
+## 9.2 backward 메서드 간소화
+
+    역전파 시 사용자의 번거로움을 줄이기 위한 것이다.
+    y.grad = np.array(1.0) 부분을 생략한다.
+    이 코드를 생략할수 있도록 다음과 같이 코드를 추가한다
+
+```python
+    class Variable:
+
+        def backwawrd(self):
+            if self.grad is None:
+                self.grad = np.ones_like(self.data)
+```
+    grad 값이 non이면 자동으로 미분값을 생성한다.
+    이제 계산을 하고 난뒤 backward를 호출하는 것만으로 미분 값이 구해진다.
+
+## 9.3 ndarray 만 취급하기
+
+    ndarray인스턴스만 취급하게 다른 데이터형을 입력할 경우 에러가 출력하게 한다.
+
+```python
+    x = np.array(1.0)
+    y = x ** 2
+    print(type(x),x.ndim)
+    print(type(y))
+```
+    위 코드는 numpy.float64나 numpy.float32등으로 달라진다
+    따라서 np.isscalar함수를 사용한다. 스칼라인지 여부를 확인한후 as_array를 이용하여 ndarray 인스턴스로 변환해 준다.
+
+# 10. 테스트
+
+    소프트 웨어 개발에서는 테스트를 빼놓을수 없습니다.
+    이번 단계에선 테스트 방법 특히 딥러닝 프레임 워크의 테스트 방법에 대해 설명 한다.
+
+## 10.1 파이썬 단위 테스트
+
+    파이썬으로 테스트할때는 표준 라이브러리에 포함된 unittest를 이용하면 편한다.
+    여기에서는 이전 단계에서 구현한 square 함수를 테스트 해본다.
+
+```python
+class SquareTest(unittest.TestCase):
+    def test_forward(self):
+        x = Variable(np.array(2.0))
+        y = square(x)
+        expected = np.array(4.0)
+        self.assertEqual(y.data, expected)
+```
+    unittest를 임포트 하고 unittest.TestCase를 상속한 SquareTest 클래스를 구현한다.
+    테스트할 때는 이름이 test로 시작하는 메서드를 만들고 그 안에 테스트할 내용을 적는다.
+    앞의 테스트는 square 함수의 출력이 기댓값과 같은지 확인한다.
+    따라서 입력이 2.0일때 출력이 4.0이 맞는지 확인한다.
+
+## 10.2 square 함수의 역전파 테스트
+
+    방금 구현한 Square test 클래스에 다음 코드를 추가한다.
+
+```python
+    def test_backward(self):
+        x = Variable(np.array(3.0))
+        y = square(x)
+        y.backward()
+        expected = np.array(6.0)
+        self.assertEqual(x.grad, expected)
+```
+
+    테스트를 돌려보면 결과가 일치하는지 확인합니다.
+
+### 10.3 기울기 확인을 이용한 자동 테스트
+
+    기울기 확인 이라는 방법을 이용하면 자동화가 가능하다.
+    수치미분으로 구한 결과와 역전파로 구한 결과를 비교하여 그 차이가 크면 역전파 구현이 문제가 있다고 판단하는 검증 기법입니다.
+
+```python
+def numerical_diff(f, x, eps=1e-4):
+    x0 = Variable(x.data - eps)
+    x1 = Variable(x.data + eps)
+    y0 = f(x0)
+    y1 = f(x1)
+    return (y1.data - y0.data) / (2 * eps)
+
+    def test_gradient_check(self):
+        x = Variable(np.random.rand(1))
+        y = square(x)
+        y.backward()
+        num_grad = numerical_diff(square, x)
+        flg = np.allclose(x.grad, num_grad)
+        self.assertTrue(flg)
+```
+
+기울기 확인을 할때 무작위 입력값을 하나 생성하고 이를 역전파로 미분값을 구하고 numerical_diff 함수를 사용해서 수치 미분으로 계산해본다.
+그리고 np.allclose(a,b)를 이용해 값이 가까운지 아닌지를 판단한다.
+얼마나 가까운지에 대한 기준값은 rtol,atol로 정할수 있다.
+>>>>>>> 954aa291a211b18ddc117cbad8bca9e01b8a1357
