@@ -158,3 +158,118 @@ class Variable:
     y.backward()
     print('x.grad',x.grad)
 ```
+    이걸 미분하면 2가 나와야 하지만 1이나온다 이 문제를 해결해 보자
+
+```python
+
+
+    class Variable:
+
+        def backward(self):
+            for x, gx in zip(f.input, gxs):
+                xgrad = gx # 이게 실수이다.
+```
+
+    미분값이 그대로 덮어 씌워지기 때문에 그렇다.
+
+![그림14-2](./img/그림%2014-2.png)
+
+
+##  14.2 해결책
+
+    해결책은 간단하다
+
+```python
+
+    if x.grad is None:
+        x.grad = gx
+    else:
+        x.grad = x.grad + gx
+
+```
+
+    앞서 시행했던 코드를 다시 실행하면 2가 나오는 것을 보여준다.
+
+
+## 14.3 미분값 재설정
+
+    위의 변경으로 인해 다른 문제가 발생할수도 있다
+
+``` python
+    x = Variable(np.array(3.0))
+    y = add(x,x)
+    y.backward()
+    print(x.grad)
+
+    y = add(add(x,x),x)
+    y.backward()
+    print(x.grad)
+```
+
+    위의 코드를 계산하면 2.0 과 5.0이 나온다 이것은 variable 안의 x 를 재사용하기 때문이다. 따라서 Variable 안에 미분 값을 초기화 시켜주는 메서드를 추가한다.
+
+``` python
+
+    class Variable:
+
+        def cleargrad(self):
+            self.grad = None
+```
+
+    이상으로 단계를 마무리 한다.
+
+
+# 15. 복잡한 계산 그래프(이론편)
+
+    지금까지 우리는 아래의 그림처럼 한줄로 늘어선 계산 그래프를 다뤘다
+
+![그림15-1](./img/그림%2015-1.png)
+
+    그러나 계산이 이렇게 한줄로 될 필요는 없다.
+
+![그림15-2](./img/그림%2015-2.png)
+
+    이렇게도 만들수 있으나 우리의 DeZero는 이런 복잡한 연결의 역전파를 제대로 할수가 없다.
+
+## 15.1 역전파의 올바른 순서
+
+![그림15-3](./img/그림%2015-3.png)
+
+    DeZero는 위 그림을 제대로 미분하지 못한다
+
+![그림15-4](./img/그림%2015-4.png)
+
+    위 그림처럼 역전파가 진행되야 한다.
+
+## 15.2 현재의 DeZero
+
+```python
+class Variable:
+
+    def backward(self):
+        if self.grad is None:
+            self.grad = np.ones_like(self.data)
+
+        funcs = [self.creator]
+
+        while funcs:
+            f = funcs.pop()
+            gys = [output.grad for output in f.outputs]
+            gxs = f.backward(*gys)
+
+            if not isinstance(gxs, tuple):
+                gxs = (gxs,)
+
+            for x,gx in zip(f.input, gxs):
+                if x.grad is None:
+                    x.grad = gx
+                else:
+                    x.grad = x.grad + gx
+
+                if x. creator is not None:
+                    func.append(x.creator)
+```
+
+    위의 코드대로라면 흐름은 다음과 같이 나타날 것입니다.
+
+![그림15-5](./img/그림%2015-5.png)
