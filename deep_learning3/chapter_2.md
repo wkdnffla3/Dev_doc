@@ -142,3 +142,19 @@ class Variable:
 ```
 
     Function 클래스의 인스턴스 변수 이름이 단수형인 input에서 inputs로 바꼇다.
+
+# 14. 같은 변수 반복 사용
+
+    현재의 DeZero 에는 문제가 있다 같은 변수를 반복해서 사용할 경우 의도대로 동작하지 않을수 있다!
+
+![그림14-1](./img/그림%2014-1.png)
+
+```python
+    x = Variable(np.array(3.0))
+    y = add(x,x)
+
+    print('y',y.data)
+
+    y.backward()
+    print('x.grad',x.grad)
+```
