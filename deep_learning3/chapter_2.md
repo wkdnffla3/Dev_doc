@@ -313,3 +313,323 @@ class Variable:
 
     먼저 Variable 클래스와 Function 클래스에 인스턴스 변수 generation을 추가.
 
+``` python
+class Variable:
+    def __init__(self, data):
+        if data is not None:
+            if not isinstance(data, np.ndarray):
+                raise TypeError('{} is not supported'.format(type(data)))
+
+        self.data = data
+        self.grad = None
+        self.creator = None
+        self.generation = 0
+
+    def set_creator(self, func):
+        self.creator = func
+        self.generation = func.generation + 1 # 세대 설정 부모 +1
+
+```
+
+    variable 클래스는 generation을 0으로 초기화하고
+    set_creator 메서드가 부모 세대보다 1만큼 큰 값을 설정한다.
+
+![그림16-1](./img/그림%2016-1.png)
+
+    Function 클래스의 generation은 입력 변수와 같은 값으로 설정한다.
+
+![그림16-2](./img/그림%2016-2.png)
+
+```python
+class Function:
+    def __call__(self, *inputs):
+        xs = [x.data for x in inputs]
+        ys = self.forward(*xs)
+        if not isinstance(ys, tuple):
+            ys = (ys,)
+        outputs = [Variable(as_array(y)) for y in ys]
+
+        self.generation = max([x.generation for x in inputs])
+        for output in outputs:
+            output.set_creator(self)
+        self.inputs = inputs
+        self.outputs = outputs
+        return outputs if len(outputs) > 1 else outputs[0]
+```
+
+## 16.2 세대 순으로 꺼내기
+
+![그림16-3](./img/그림%2016-3.png)
+
+    위의 그림을 기반으로 세대를 큰곳부터 꺼내면 됩니다.
+
+## 16.3 Variable 클래스의 backward
+
+```python
+def backward(self):
+        if self.grad is None:
+            self.grad = np.ones_like(self.data)
+
+        funcs = []
+        seen_set = set()
+
+        def add_func(f):
+            if f not in seen_set:
+                funcs.append(f)
+                seen_set.add(f)
+                funcs.sort(key=lambda x: x.generation)
+
+        add_func(self.creator)
+
+        while funcs:
+            f = funcs.pop()
+            gys = [output.grad for output in f.outputs]
+            gxs = f.backward(*gys)
+            if not isinstance(gxs, tuple):
+                gxs = (gxs,)
+
+            for x, gx in zip(f.inputs, gxs):
+                if x.grad is None:
+                    x.grad = gx
+                else:
+                    x.grad = x.grad + gx
+
+                if x.creator is not None:
+                    add_func(x.creator)
+```
+
+    add_func 함수가 DeZero 함수 리스트를 세대 순으로 정렬한다.
+
+## 16.4 동작확인
+
+    이제 세대가 큰 함수를 꺼낼 수 있으니 그래프와 역전파도 올바른 순서로 진행이 가능할 것이다!
+
+![그림16-4](./img/그림%2016-4.png)
+
+```python
+x = Variable(np.array(2.0))
+a = square(x)
+y = add(square(a), square(a))
+y.backward()
+
+print(y.data)
+print(x.grad)
+```
+
+
+# 17 메모리 관리와 순환 참조
+
+    DeZero는 교육적인 면을 중시해서 이해하기 쉽도록 제작
+    따라서 성능은 다소 낮음
+    따라서 성능을 개선 가능할 대체기술을 DeZero에 도입할 계획
+    시작에 앞서 파이썬의 메모리 관리에 대해 알아본다
+
+## 17.1 메모리 관리
+
+    파이썬은 필요 없어진 객체를 메모리에서 자동으로 삭제한다.
+    불필요한 객체는 파이썬 인터프리터가 제거
+    코드를 제대로 작성하지 않으면 메모리 누수 메모리 부족등의 문제가 발생
+    신경망에서는 큰데이터를 다루는 경우가 많아 메모리 관리가 필수이다.
+
+    파이썬은 2가지의 메모리 관리 방식을 가지고 있다.
+    1. 참조의 수를 세는 방법 (참조 카운트)
+    2. 세대를 기준으로 쓸모없어진 객체를 회수하는 방법(GC)
+
+## 17.2 참조 카운트 방식의 메모리 관리
+
+    모든 객체는 참조 카운트가 0인 상태로 생성되고 다른 객체가 참조 할대마다 1씩 증가
+    참조가 끊길 때마다 1씩 감소한다.
+
+    ex)
+    대입 연산자를 사용할때
+    함수에 인수로 전달할 때
+    컨테이너 타입 객체에 추가할때
+
+```python
+a=obj()
+b=obj()
+c=obj()
+
+a.b = b
+b.c = c
+
+a=b=c=None
+```
+
+    a,b,c, 라는 객체를 생성하고 a가 b를 참조하고 b가 c를 참조한다
+
+![그림17-1](./img/그림%2017-1.png)
+
+    None을 할당하게 되면 a는 참조 하던 것이 없어져 0이 되고 b와 c는 1이 될것이다.
+    a 는 0이 되어 삭제되고 b는 0 이될것이다 이것이 줄줄히 이어져 다 삭제가 된다.
+
+    참조 카운트로 많은 메모리 관리 문제를 해결이 가능하나 순환 참조는 해결하지 못한다.
+
+## 17.3 순환 참조
+
+```python
+a=obj()
+b=obj()
+c=obj()
+
+a.b = b
+b.c = c
+c.a = a
+
+a=b=c=None
+```
+![그림17-2](./img/그림%2017-2.png)
+
+    a b c 3개의 객체가 원 모양을 이루며 서로를 참조하게 되는데 이게 순환 참조이다.
+
+    3객체 의 참조카운트는 모두 1이지만 사용자는 이들 3개의 객체중 아무것에도 접근이 불가능하다.
+    None을 하는 것으로는 순환 참조의 참조 카운트가 0이 되지 않는다.
+    따라서 GC(세대별 가비지 컬렉션)가 등장하게 된다.
+
+    gc는 참조 카운트보다 영리한 방법으로 불필요한 객체를 찾아낸다
+    gc의 구조는 따로 알아본다.
+    gc는 메모리가 부족해지는 시점에 파이썬 인터프리터에 의해 자동으로 호출
+
+    DeZero에는 순환 참조가 존재한다.
+
+![그림17-3](./img/그림%2017-3.png)
+    
+    이것은 파이썬 모듈인 weakref로 해결이 가능하다.
+
+
+## 17.4 weakref 모듈
+
+    파이썬에서는 weakref.ref함수를 사용하여 약한 참조를 만들수 있다.
+    약한 참조란 다른 객체를 참조하되 참조 카운드트는 증가시키지 않는 기능이다.
+
+    데이터엔 접근이 가능하지만 참조 카운트는 증가하지 않는다.
+
+    이것을 DeZero에도 추가해 보자
+
+```python
+class Function:
+    def __call__(self, *inputs):
+        xs = [x.data for x in inputs]
+        ys = self.forward(*xs)
+        if not isinstance(ys, tuple):
+            ys = (ys,)
+        outputs = [Variable(as_array(y)) for y in ys]
+
+        self.generation = max([x.generation for x in inputs])
+        for output in outputs:
+            output.set_creator(self)
+        self.inputs = inputs
+        self.outputs = [weakref.ref(output) for output in outputs]
+        return outputs if len(outputs) > 1 else outputs[0]
+
+    def forward(self, xs):
+        raise NotImplementedError()
+
+    def backward(self, gys):
+        raise NotImplementedError()
+``` 
+
+    이와 같이 인스턴스 변수 self.outputs가 대상을 약한 참조로 가리키게 변경
+
+## 17.5 동작확인
+
+```python
+for i in range(10):
+    x = Variable(np.random.randn(10000))  # big data
+    y = square(square(square(x)))
+```
+
+![그림17-5](./img/그림%2017-5.png)
+
+
+
+    for 문을 이용해 다음 그림과 같이 복잡한 참조 구조를 만들어 내게 된다.
+    for 문이 2번 반복될때 참조 카운트가 0이 된다.
+
+# 18 메모리 절약 모드
+
+    이전 단계에서는 파이썬의 메모리 관리 방식에 대해 알아 봤다 
+    이번 단계에서는 DeZero의 메모리 사용을 개선할 수 있는 구조 두가지를 도입한다.
+    첫번째는 역전파시 사용하는 메모리 양을 줄이는 방법으로 불필요한 미분 결과를 보관하지 않고 즉시 삭제한다.
+    두번째는 역 전파가 필요없는 경우의 모드 를 제공하는 것이다.
+    이 모드는 불필요한 계산을 생략한다.
+
+
+## 18.1 필요없는 미분값 삭제
+
+    우리는 중간변수의 미분값은 필요없다 따라서 지워준다.
+
+```python
+def backward(self, retain_grad=False):
+        if self.grad is None:
+            self.grad = np.ones_like(self.data)
+
+            if not retain_grad:
+                for y in f.outputs:
+                    y().grad = None  # y is weakref
+```
+
+    메서드의 인수에 retain-grad를 추가 retain-greed가 true 이면 지금처럼 모든 변수가 저장
+    false면 중간 변수의 모든 미분값을 None으로 재설정 한다.
+
+## 18.2 Function 클래스 복습
+
+    DeZero 에서 미분을 하려면 순전파를 수행한 뒤 역전파 해주면 된다.
+    역전파 시에는 순전파의 계산 결과가 필요하기 때문에 순전파때 결괏값을 기억해 둔다.
+
+    인스턴스 변수 input은 역전파 계산시 사용된다.
+
+## 18.3 config 클래스를 활용한 모드 전환
+
+    순전파만을 할 경우를 위한 개선을 DeZero에 추가한다
+    우선 두가지 모드 역전파 활성 모드와 역전파 비활성 모드를 전환하는 구조가 필요하다.
+
+
+```python
+lass Function:
+    def __call__(self, *inputs):
+        xs = [x.data for x in inputs]
+        ys = self.forward(*xs)
+        if not isinstance(ys, tuple):
+            ys = (ys,)
+        outputs = [Variable(as_array(y)) for y in ys]
+
+        if Config.enable_backprop:
+            self.generation = max([x.generation for x in inputs])
+            for output in outputs:
+                output.set_creator(self)
+            self.inputs = inputs
+            self.outputs = [weakref.ref(output) for output in outputs]
+
+
+```
+
+## 18.4 모드 전환
+
+    이상으로 역전파 활성 비활성을 구분 짓는 코드가 그려졌다.
+
+## 18.5 with 문을 활용한 모드 전환
+
+    파이썬에는 with이라고 하는 후처리를 자동으로 수행하고자 할 때 사용할 수 있는 구문이 있다. 
+    대표적인 예로는 파일의 open과 colose 이다.
+
+    with 에 들어갈때 파일이 열리고 블록을 빠져 나올때 닫힌다.
+    이것을 이용해 with 블록에 들어갈 때의 전처리, 블록을 빠져나올때의 후처리로 나눌수 있다.
+
+
+```python
+with using_config('enable_backprop', False):
+    x = Variable(np.array(2.0))
+    y = square(x)
+
+with no_grad():
+    x = Variable(np.array(2.0))
+    y = square(x)
+```
+
+    with문 안에서만 있으면 역전파 비활성화 모드가 된다.
+    이제 with 문을 사용한 모드 전환을 구현해 보자
+
+    
+
+
