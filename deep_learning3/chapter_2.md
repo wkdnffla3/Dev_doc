@@ -630,6 +630,103 @@ with no_grad():
     with문 안에서만 있으면 역전파 비활성화 모드가 된다.
     이제 with 문을 사용한 모드 전환을 구현해 보자
 
-    
+```python
+
+import contextlib
+
+@contextlib.contextmanager
+def config_test():
+    print('start')
+    try:
+        yield
+    finally:
+        print('done';)
+
+    with config_test():
+        print('process')
+```
+
+    앞의 코드처럼 @contextlib.contextmanager 데코레이터를 달면 문맥을 판단하는 함수가 만들어 진다.
+    yield 전에는 전처리 로직을 yield 다음에는 후처리 로직을 작성한다
+    그러면 with config_text() 형태의 구문을 사용할 수 있습니다.
+    이 구문을 사용하면 with 블록 안으로 들어갈 때 전처리가 실행되고 블록 범위를 빠져 나올때 후처리가 실행된다.
+
+
+
+
+# 19 변수 사용성 개선
+
+    deZero의 기초는 완성이 되었다.
+    DeZero를 더 쉽게 사용하도롭 개선하는 작업이다.
+
+
+## 19.1 변수 이름 지정
+
+    앞으로 수많은 변수를 처리할 것이라서 변수들을 서로 구분할 필요가 있다
+    변수에 이름을 붙혀줄 수 있도록 설정한다
+
+```python
+class Variable:
+    def __init__(self, data, name=None):
+        if data is not None:
+            if not isinstance(data, np.ndarray):
+                raise TypeError('{} is not supported'.format(type(data)))
+
+        self.data = data
+        self.name = name
+        self.grad = None
+        self.creator = None
+        self.generation = 0
+
+```
+
+## 19.2 ndarray 인스턴스 변수
+
+    variable 은 데이터를 담는 상자의 역할을 한다
+    사용자의 입장에서 중요한것은 상자가 아닌 그 안의 데이터 이다.
+    따라서 variable이 투명하게 보이도록 데이터를 바로 볼수있게 해주는 장치를 만든다.
+
+    Variable 안에는 ndarray 인스턴스가 있고 넘파이의 ndarray 인스턴스는 다차원 배열용 인스턴스 변수가 몇가지 제공된다
+    다음은 그중 하나인 shape 변수를 사용하는 모습이다.
+
+```python
+import numpy as np
+x = np.array([[1,2,3],[4,5,6]])
+x.shape > (2,3)
+```
+
+    인스턴스 변수 shape는 다차원 배열의 형상을 알려준다
+    이 작업을 Variable 인스턴스에서도 할수 있도록 확장한다.
+
+```python
+class Variable:
+    def __init__(self, data, name=None):
+        if data is not None:
+            if not isinstance(data, np.ndarray):
+                raise TypeError('{} is not supported'.format(type(data)))
+
+        self.data = data
+        self.name = name
+        self.grad = None
+        self.creator = None
+        self.generation = 0
+
+    @property
+    def shape(self):
+        return self.data.shape
+
+    @property
+    def ndim(self):
+        return self.data.ndim
+
+    @property
+    def size(self):
+        return self.data.size
+
+    @property
+    def dtype(self):
+        return self.data.dtype
+```
+
 
 
