@@ -37,8 +37,7 @@ z.backward()
 print(x.grad,y.grad)
 
 
-x = Variable(np.array(1.0))
-y = Variable(np.array(1.0))
+
 z = goldstein(x, y)  # sphere(x, y) / matyas(x, y)
 z.backward()
 print(x.grad, y.grad)
