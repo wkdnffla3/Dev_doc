@@ -564,7 +564,7 @@ public class Args {
     return valid;
   }
   
-  private boolean parseSchema() throws ParseException { 
+  private boolean parseSchema() throws ParseException {  //,를 기준으로 파싱
     for (String element : schema.split(",")) {
       if (element.length() > 0) {
         parseSchemaElement(trimmedElement);
