@@ -7,6 +7,9 @@ from dezero import optimizers
 from dezero import DataLoader
 from dezero.models import MLP
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 max_epoch = 300
 batch_size = 30
@@ -20,6 +23,9 @@ test_loader = DataLoader(test_set, batch_size, shuffle=False)
 
 model = MLP((hidden_size, 3))
 optimizer = optimizers.SGD(lr).setup(model)
+
+temp_loss =np.arange(0)
+temp_acc = np.arange(0)
 
 for epoch in range(max_epoch):
     sum_loss, sum_acc = 0, 0
@@ -47,6 +53,10 @@ for epoch in range(max_epoch):
             acc = F.accuracy(y, t)
             sum_loss += float(loss.data) * len(t)
             sum_acc += float(acc.data) * len(t)
-
+            np.append(temp_acc,sum_acc)
+            np.append(temp_loss ,sum_loss)
     print('test loss: {:.4f}, accuracy: {:.4f}'.format(
         sum_loss / len(test_set), sum_acc / len(test_set)))
+    
+plt.plot(temp_acc,temp_loss,epoch,'o')
+plt.show()

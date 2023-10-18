@@ -128,8 +128,25 @@ def accuracy(y,t):
     return Variable(as_array(acc))
 ```
 
-- accuracy 함수는 인수 y와 t를 받아서 정답률을 계산해준다.
-- y는 신경망의 예측 결과, t는 정답 데이터이다.
+- accuracy 함수는 인수 y(신경망의 예측결과)와 t(정답 데이터)를 받아서 정답률을 계산해준다.
+
+- 신경망의 예측 결과를 pred에 저장해서 정답데이터t와 비교해 일치하는 비율이 정답률이다.
+```python
+y = np.array([[0.2, 0.8, 0], [0.1, 0.9, 0],[0.8, 0.1, 0.1]])
+t = np.array([1,2,0])
+acc = F.accuracy(y,t)
+print(acc)
+```
+![Alt text](image-7.png)
+- 위의 코드는 y에 담긴 3개의 데이터에 신경망이 예측한 결과를 보여준다.
+
+## 50.4 스파이럴 데이터셋 학습 코드
+
+- DataLoader 클래스와 accuracy 함수를 사용하여 스파이럴 데이터셋을 학습해본다.
+
+
+![pic50-1](./img/그림%2050-1.png)
+
 
 
 

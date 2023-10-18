@@ -4,6 +4,9 @@ if '__file__' in globals():
 from dezero.datasets import Spiral
 from dezero import DataLoader
 
+import numpy as np
+import dezero.functions as F
+
 batch_size = 10
 max_epoch = 1
 
@@ -22,10 +25,9 @@ for epoch in range(max_epoch):
         break
 
 
-def accuracy(y,t):
-    y,t = as_variable(y), as_variable(t)
 
-    pred = y.data.argmax(axis=1).reshape(t.shape)
-    result = (pred== t.data)
-    acc = result.mean()
-    return Variable(as_array(acc))
+
+y = np.array([[0.2, 0.8, 0], [0.1, 0.9, 0],[0.8, 0.1, 0.1]])
+t = np.array([1,2,0])
+acc = F.accuracy(y,t)
+print(acc)
