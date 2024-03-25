@@ -69,12 +69,12 @@
 - 넘파이에서는 형상이 다른 배열끼리도 계산이 가능하다.
 - 코드에서는 2x2 행렬A에 스칼라값 10을 곱했다 그림 1-1과 같이 10 이라는 스칼라 값이 2x2행렬로 확대된 후 연산이 이루어 진다.
 
-![pic1-1](./deep-learning-from-scratch-master/deep-learning-from-scratch-master/ch01/images/fig%201-1.png)
+![pic1-1](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/ch01/images/fig%201-1.png)
 
 - 이 기능을 브로드캐스트 라고 한다!
 - 다음 그림1-2 처럼 B가 자동으로 크기를 맞춰 브로드캐스트 한다.
 
-![pic1-2](./deep-learning-from-scratch-master/deep-learning-from-scratch-master/ch01/images/fig%201-2.png)
+![pic1-2](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/ch01/images/fig%201-2.png)
 
 # 1.5.6 원소접근
 - 코드는 ipynb에 있다.
