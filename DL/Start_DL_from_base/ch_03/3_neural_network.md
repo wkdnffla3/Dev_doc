@@ -26,7 +26,7 @@
 
     - 앞에서 우리는 퍼셉트론에서 bias 부분을 배웠다. 
 
-    -bias 부분의 퍼셉트론은 그림 3-3과 같다
+    - bias 부분의 퍼셉트론은 그림 3-3과 같다
 
 !그림 3-3
 
@@ -159,11 +159,8 @@ sigmoid(x) #array([0.26894142, 0.73105858, 0.88079708])
 ### 3.2.7 Relu 함수
 
     - relu 함수는 입력이 0을 넘으면 그 입력을 그대로 출력하고 0 이하이면 0을 출력하는 함수이다.
-
-![pic3-7](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%203.7.png)
-
     - 식으로는 3.7로 쓸수 있다.
-
+![pic3-7](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%203.7.png)
 ```python
 
     def relu(x):
@@ -237,7 +234,7 @@ sigmoid(x) #array([0.26894142, 0.73105858, 0.88079708])
 
     - 항등 함수는 입력을 그대로 출력한다 입력과 출력이 항상 같다는 뜻의 항등이다.
     - 분류에 사용되는 소프트 맥스 함수의 식은 식3-10이 된다.
-![식3.10]
+![식3.10](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%203.10.png)
 
     - 이 소프트 맥스 함수를 그림으로 나타내면 그림 [3-22] 처럼 된다.
 
@@ -248,7 +245,7 @@ sigmoid(x) #array([0.26894142, 0.73105858, 0.88079708])
     - 구현한 함수는 지수를 사용하기 때문에 오버 플로우의 위험이 있다.
     - 이 문제를 해결할 수식으로 식 3.11 이 있다.
 
-![식 3.11]
+![식 3.11](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%203.11.png)
 
 ### 3.5.3 소프트 맥스 함수의 특징
     - 소프트 맥스 함수의 특징은 0과 1.0 사이의 실수이며 출력의 총합은 1이다.
