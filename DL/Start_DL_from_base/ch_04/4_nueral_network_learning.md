@@ -24,7 +24,7 @@
     - 데이터에서 규칙을 찾아내는 것은 기계가 하지만 이미지를 벡터로 바꿀때 사용하는 특징은 사람이 설계해야된다.
     - 이 내용들을 그림으로 정리하면 아래와 같다.
 
-![그림 4-2]()
+![그림 4-2](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%204-2.png)
 
     - 신경망은 이미지를 있는 그대로 학습한다.
     - 두번째 접근 방식(특징과 기계학습 방식)에서는 특징을 사람이 설계했지만 신경망(3번째)은 이미지에 표함된 중요한 특징까지도 기계가 학습한다.
@@ -55,7 +55,7 @@
     - 정답일때의 추정의 자연로그를 계산하는 식이다.
     - 정답일때 추정은 0에 가까워진다.
 
-[!그림 4-3]()
+![그림 4-3](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%204-3.png)
 
 ### 4.2.3 미니배치 학습
 
@@ -66,7 +66,36 @@
 
 ### 4.2.4 배치용 교차 엔트로피 오차 구현하기
 
-    - 
+    - 조금 전에 구현한 교차 엔트로피 오차( 데이터를 하나씩 처리하는 구현)를 조금만 바꿔주면 된다.
+    - 데이터가 하나인 경우와 데이터가 배치로 묶여 입력될 경우 모두를 처리할수 있도록 구현한다.
+
+``` python
+def cross_entropy_error(y,t):
+    if y.ndim == 1:
+        t = t.reshape(1, t.size)
+        y = y.reshape(1, y.size)
+
+    batch_size = y.shape[0]
+    return -np.sum(t*np.log(y+ 1e-7)) / batch_size
+
+
+```
+
+    - 이 코드에서 y는 신경망의 출력 t는 정답 레이블 입다.
+    - y가 1차원 이라면 데이터 하나당 교차 엔트로피 오차를 구하는 경우는 reshape 함수로 데이터의 횽상을 바꿔 계산한다.
+
+    -정답 레이블이 원 핫 인코딩이 아니라 2나 7등의 숫자 레이블로 주어졌을 떄의 교차 엔트로피 오차는 다음과 같이 구현할수 있다.
+
+``` python
+    def cross_entropy_error(y,t):
+        if y.ndim == 1:
+            t = t.reshape(1,t.size)
+            y = y.reshape(1, y.size)
+
+        batch_size = y.shape[0]
+
+        return -np.sum(np.log(y[np.arane(batch_size),t]+1e-7))/batch_size
+```
 
 ### 4.2.5 왜 손실함수를 설정하는가?
 
