@@ -65,8 +65,37 @@
     - 따라서 데이터중 일부를 뽑아서 학습을 수행한다 이를 미니 배치 라고 한다.
 
 ### 4.2.4 배치용 교차 엔트로피 오차 구현하기
-    
-    - 
+
+    - 조금 전에 구현한 교차 엔트로피 오차( 데이터를 하나씩 처리하는 구현)를 조금만 바꿔주면 된다.
+    - 데이터가 하나인 경우와 데이터가 배치로 묶여 입력될 경우 모두를 처리할수 있도록 구현한다.
+
+``` python
+def cross_entropy_error(y,t):
+    if y.ndim == 1:
+        t = t.reshape(1, t.size)
+        y = y.reshape(1, y.size)
+
+    batch_size = y.shape[0]
+    return -np.sum(t*np.log(y+ 1e-7)) / batch_size
+
+
+```
+
+    - 이 코드에서 y는 신경망의 출력 t는 정답 레이블 입다.
+    - y가 1차원 이라면 데이터 하나당 교차 엔트로피 오차를 구하는 경우는 reshape 함수로 데이터의 횽상을 바꿔 계산한다.
+
+    -정답 레이블이 원 핫 인코딩이 아니라 2나 7등의 숫자 레이블로 주어졌을 떄의 교차 엔트로피 오차는 다음과 같이 구현할수 있다.
+
+``` python
+    def cross_entropy_error(y,t):
+        if y.ndim == 1:
+            t = t.reshape(1,t.size)
+            y = y.reshape(1, y.size)
+
+        batch_size = y.shape[0]
+
+        return -np.sum(np.log(y[np.arane(batch_size),t]+1e-7))/batch_size
+```
 
 ### 4.2.5 왜 손실함수를 설정하는가?
 
