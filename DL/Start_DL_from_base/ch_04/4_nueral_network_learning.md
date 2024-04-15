@@ -24,7 +24,7 @@
     - 데이터에서 규칙을 찾아내는 것은 기계가 하지만 이미지를 벡터로 바꿀때 사용하는 특징은 사람이 설계해야된다.
     - 이 내용들을 그림으로 정리하면 아래와 같다.
 
-![그림 4-2]()
+![그림 4-2](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%204-2.png)
 
     - 신경망은 이미지를 있는 그대로 학습한다.
     - 두번째 접근 방식(특징과 기계학습 방식)에서는 특징을 사람이 설계했지만 신경망(3번째)은 이미지에 표함된 중요한 특징까지도 기계가 학습한다.
@@ -55,7 +55,7 @@
     - 정답일때의 추정의 자연로그를 계산하는 식이다.
     - 정답일때 추정은 0에 가까워진다.
 
-[!그림 4-3]()
+![그림 4-3](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%204-3.png)
 
 ### 4.2.3 미니배치 학습
 
@@ -65,7 +65,7 @@
     - 따라서 데이터중 일부를 뽑아서 학습을 수행한다 이를 미니 배치 라고 한다.
 
 ### 4.2.4 배치용 교차 엔트로피 오차 구현하기
-
+    
     - 
 
 ### 4.2.5 왜 손실함수를 설정하는가?
