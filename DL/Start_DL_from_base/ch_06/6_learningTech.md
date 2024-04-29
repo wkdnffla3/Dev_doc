@@ -140,3 +140,23 @@ class Momentum:
 
 - 공이 바닥을 구르는것 처럼 나온다.
 
+### 6.1.5 AdaGrad
+
+- 신경망 학습에서는 학습룰 (수식에서는 감마? 파이?)값이 중요하다 값이 너무 작으면 학습 시간이 길어지고 크면 발산하여 학습이 제대로 이루어 지지 않는다.
+
+- 이 학습률을 정하는 효과적 기술로 학습률 감소가 있다.
+- 학습을 진행하면서 학습률을 줄여가는 방법이고 실제로도 자주 쓰인다.
+
+- 학습률을 서서히 낮추는 가장 간단한 방법은 매개변수 '전체'의 학습률 값을 일괄적으로 낮추는 것이다.
+
+- 이를 더욱 발전 시킨것이 AdaGrad 이다.
+- AdaGrad는 각각의 매개변수에 맞춤형 값을 만들어 낸다.
+
+- 식으로는 다음과 같다.
+
+![(e6-5)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%206.5.png)
+![(e6-6)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%206.6.png)
+
+- 같은 변수는 위에서 설명한 봐와 같으나 h 라는 새로운 변수가 등장한다.
+- h는 기존 기울기 값을 제곱하여 계속 더해준다 그리고 매개변수를 갱신할때 루트를 씌운것을 나눠 학습률을 조정한다.
+- 매개변수의 원소 중에서 많이 움직인(크게 갱신된) 원소는 학습률이 낮아진다는 뜻이다.
