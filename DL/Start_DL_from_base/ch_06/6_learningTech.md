@@ -87,3 +87,56 @@ for i in range(10000):
   - 그림 6-1 함수에 시작점이 (-7.0, 2.0) SGD를 적용하면 결과는 다음과 같이 나온다.
   
   ![(fig6-3)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-3.png)
+
+ - 위 그림은 심하게 굽이진 움직임을 보여준다 , 비효율적
+ - 즉 sgd의 단점은 비등방성 함수 에서는 탐색 경로가 비효율적 이라는 것이다.
+ - 따라서 이러한 SGD의 단점을 개선해주는 모멘텀, ADAGRAD, ADAM 이라는 세 방법을 소개할 것이다.
+
+ ### 6.1.4 모멘텀
+
+ - 모멘텀은 운동량이란 뜻으로 수식으로 다음과 같다.
+
+![(e6-3)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%206.3.png)
+
+![(e6-4)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%206.4.png)
+
+- SGD 처럼 여기에서도 W는 갱신할 가중치 매개변수, 분수는 W에 대한 손실함수의 기울기, 나머지는 학습률이다.
+- V는 물리에서 말하는 벡터 즉 속도에 해당한다.
+
+- 식 6-3은 기울기 방향으로 힘을 받아 물체가 가속된다는 물리 법칙을 나타낸다.
+- 모멘텀은 그림 6-4와 같이 공이 그릇의 바닥을 구르는 듯한 움직임을 보여준다.
+
+![(fig6-4)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-4.png)
+
+- 식 6-3의 av 항은 물체가 아무런 힘을 받지 않을 때 서서히 하강시키는 역할을 한다 a는 0.9등의 값으로 설정한다.
+- 소스코드는 common/optimizer.py에 있다.
+
+
+``` python
+class Momentum:
+    def __init__(self, lr=0.01, momentum=0.9):
+        self.lr=lr
+        self.momentum = momentum
+        self.v = None
+
+    def update(self,params, grads):
+        if self.v is None:
+            self.v = {}
+            for key, val in params.items():
+                self.v[key]=np.zeros_lisk(val)
+
+            for key in params.keys():
+                self.vp[key] = self.momentum*self.v[key] - self.lr*grads[key]
+                params[key] += self.v[key]
+
+
+```
+
+- 변수 v가 물체의 속도이다 초기화때는 아무 값도 담지 않다가 update 구문이 시작되면 처음 호출될 때 매개변수와 같은 구조의 데이터를 딕셔너리 변수로 저장
+
+- 모멘텀은 사용하여 식 6-2의 최적화 문제를 풀어보면 다음과 같은 그림이 나온다.
+
+  ![(fig6-5)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-5.png)
+
+- 공이 바닥을 구르는것 처럼 나온다.
+
