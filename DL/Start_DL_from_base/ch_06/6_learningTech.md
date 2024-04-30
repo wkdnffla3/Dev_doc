@@ -155,8 +155,51 @@ class Momentum:
 - 식으로는 다음과 같다.
 
 ![(e6-5)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%206.5.png)
+
+
 ![(e6-6)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%206.6.png)
 
 - 같은 변수는 위에서 설명한 봐와 같으나 h 라는 새로운 변수가 등장한다.
 - h는 기존 기울기 값을 제곱하여 계속 더해준다 그리고 매개변수를 갱신할때 루트를 씌운것을 나눠 학습률을 조정한다.
 - 매개변수의 원소 중에서 많이 움직인(크게 갱신된) 원소는 학습률이 낮아진다는 뜻이다.
+
+- AdaGrad의 구현을 살펴본다. 소스 코드는 common/optimizer.py에 있다.
+
+```python
+class AdaGrad:
+    def __init__(self, lr=0.01):
+        self.lr = lr
+        self.h = None
+
+    def update(self, params, grads):
+        if self.h is None:
+            self.h={}
+        for key, val in params.items():
+            self.h[key] = np.zeros_like(val)
+
+        for key in params.keys():
+            self.h[key] += grads[key] * grads[key]
+            params[key] -= self.lr * grads[key] / (np.sqrt(self.h[key]) + 1e-7)
+
+```
+- 여기에서 주의할 것은 마지막 줄에서 1e-7이라는 아주 작은 값을 더하는 부분이다.
+
+- 이 작은 값은 self.h[key]에 0이 있다 해도 0으로 나누는 사태를 방지한다.
+
+- 식 6-2의 최적화 문제를 풀면 그림 6-6과 같이 나온다.
+
+ 
+  ![(fig6-6)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-6.png)
+
+
+- 그림 6-6을 보면 최솟값을 향해 효율적으로 움직이는 것을 알 수 있다.
+
+### 6.1.6 Adam
+
+- 모멘텀은 공이 그릇 바닥을 구르는 듯한 움직임을 보였다.
+
+- AdaGrad는 매개변수의 원소 마다 적응적으로 갱신 정도를 조정했다.         
+
+- 이 두 기법을 조합한 것이 Adam 이다.
+
+
