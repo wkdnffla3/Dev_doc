@@ -325,3 +325,6 @@ w = np.random.randn(node_num , node_num) * 0.01
 
   ![(fig6-11)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-11.png)
 
+- 이번엔 0.5 부근에 집중 되어있다. 기울기 소실 문제는 발생하지 않지만 활성화 값들이 치우쳤다는 것은 표현력 관점에서 문제가 있는 것이다.
+
+- 그래서 활성화 값들이 치우치면 표현력을 제한한다는 관점에서 문제가 된다.
