@@ -204,4 +204,124 @@ class AdaGrad:
 
 - 두 방법의 이점을 조합했다면 매개변수 공간을 효율적으로 탐색해줄것으로 기대
 
+- 하이퍼 파라미터의 편향 보정이 이 진행
+
+- 결과는 그림 6-7과 같다.
+
+  ![(fig6-7)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-7.png)
+
+
+
+ ### 6.1.7 어느 갱신 방법을 이용할 것인가?
+
+  ![(fig6-8)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-8.png)
+
+  - 4개의 방법이다.
+
+  - 기법에 따라 생신 경로가 다르다. 문제에 따라 푸는 방법이 달라져야 하므로 주의해야한다.
+
+  - 많은 연구에서 SGD를 사용하고있지만 다른 방법도 많이 있다.
+
+  ### 6.1.8 MNIST 데이터셋으로 본 갱신 방법 비교
+
+ - 손글씨 숫자 인식을 대상을 ㅗ지금껏 설명한 네 기법을 비교해보자
+
+   ![(fig6-9)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-9.png)
+
+ - 이 실험은 각 층이 100개의 뉴런으로 구성된 5층 신경망에서 ReLU를 활성화 함수로 사용해 측정.
+
+
+ ## 6.2 가중치의 초기값
+
+ - 신경망 학습에서 중요한 것이 가중치의 초기값이다.
+
+ - 이번 절에서는 권장 초깃값에 대해서 설명하고 실험을 통해 실제로 신경망 학습이 이뤄지는지를 확인한다.
+
+ ### 6.2.1 초기값을 0으로 하면?
+
+ - 오버피팅을 억제해 범용 성능을 높이는 테크닉인 가중치 감소 기법을 소개하려 한다.
+
+ - 가중치 감소는 가중치 매개변수의 값이 작아지도록 학습하는 방법이다.
+
+ - 가중치 값을 작게 하여 오버 피팅이 일어나지 않는다.
+
+ - 가중치를 작게 만들고 싶으면 초기값도 최대한 작은 값에서 시작하는것이 정공법이다.
+
+ - 하지만 0 으로 설정하면 안된다. 학습이 올바르게 이루어지지않는다.
+
+ - 정확히는 가중치를 균일한 값으로 설정 해서는 안된다.
+
+ - 그 이유는 오차 역 전파법에서 모든 가중치의 값이 똑같이 갱신되기 떄문이다.
+
+ - 그럼 순전파때 입력층의 가중치가 0이기 떄문에 두번째 층의 뉴런에서 모두 같은 값이 전달 된다.
+
+ - 따라서 모든 층에 가중치가 똑같아 진다.
+
+ ### 6.2.2 은닉층의 활성화값 분포
+
+ - 은닉층의 활성화 값의 분포를 관찰하면 중요한 정보를 얻을 수 있다.
+
+ - 이번 절에서는 가중치의 초깃값에 따라 은닉층 활성화 값들이 어떻게 변하는지 간단한 실험을 한다.
+
+ - 활성화 함수로 시그모이드 함수를 사용하는 5층 신경망에 무작위로 생성한 입력 데이터를 흘리며 각 층의 활성화 값 분포를 히스토 그램으로 그려 보겠다.
+
+ - 이 실험을 위한 소스 코드는 ch06/weight_init_activation_histogram.py 에 있으니 참고 하면 된다.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def sigmoid(x):
+
+    return 1 / (1+ np.ecp(-x))
+
+x = np.rando.randn(1000,100)    # 1000개의 데이터
+node_num = 100                  # 각 은닉층의 노드(뉴런 수)
+hidden_layer_size = 5           # 은닉층이 5개
+
+activations = {}                # 이곳에 활성화 결과를 저장
+
+for i in range(hiddent_layer_size):
+
+    if i !=0 :
+        x = activations[i-1]
+
+    w=np.random.randn(node_num, node_num)*1
+
+    a = np.dot(x,w)
+    z = sigmoid(a)
+    activations[i] = z
+
+```
+- 층이 5개가 있으며 각 층의 뉴런은 100개씩이다. 입력 데이터로써 1000개의 데이터를 정규분포롤 무작위로 생성하여 이 5층 신경망에 흘리고 확성화 함수는 시그모이드를 각 층의 활성화 결과를 activations 변수에 저장한다.
+
+
+- 가중치의 분포에 주의를 해야한다 표준 편차가 1인 정규 분포를 이용했는데 이 분포된 정도를 바꿔가며 활성화 값들의 분포가 어떻게 변환하는지 관찰하는 것이 이 실험의 목적이다.
+
+``` python
+for i, a in activations.items():
+    plt.subplot(1,len(activations), i+1)
+    plt.title(str(i+1) + "-layer")
+    plt.hist(a.flatten(), 30 , range=(0,1))
+plt.show()
+```
+
+- 이를 실행하면 그림 6-10 의 히스토 그램을 얻을수 있다.
+
+  ![(fig6-10)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-10.png)
+
+- 각 층의 활성화 값들이 0과 1에 치우쳐 분포가 되어있다.
+
+- 따라서 역전파의 기울기 값이 점점 작아지다가 사라지게 된다 이것은 기울기 소실 문제이다.
+
+- 가중치의 표준편차를 0.01로 바꿔 같은 실험을 반복해보자
+
+```python
+# w = np.random.randn(node_num , node_num) * 1
+w = np.random.randn(node_num , node_num) * 0.01
+```
+
+- 결과를 보면 그림 6-11과 같이 나온다.
+
+  ![(fig6-11)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%206-11.png)
 
