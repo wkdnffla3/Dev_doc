@@ -55,4 +55,46 @@
 
  - 따라서 CNN에서는 이미지처럼 형상을 가진 데이터를 제대로 이해할 가능성이 존재한다.
 
- 
+ - CNN에서는 합성곱 계층의 입출력 데이터를 특징 맵 이라고 한다
+
+ - 합성곱 계층의 입력 데이터를 입력 특징 맵, 출력 데이터를 출력 특징 맵 이라고 한다.
+
+ - 이 책에서는 입출력 데이터와 특징 맵을 같은 의미로 사용한다.
+
+ ### 7.2.2 합성곱 연산
+
+ - 합성곱 계층에서의 합성곱 연산을 처리한다
+
+ - 이미지 처리에서 말하는 필터 연산이다.
+
+  ![(fig7-3)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%207-3.png)
+
+  - 그림 7-3의 합성곱 연산 예에서 어떤 계산이 이뤄지는지 보여준다
+
+  - 합성곱 연산은 필터의 윈도우를 일정 간격으로 이동해가며 입력 데이터에 적용한다.
+
+
+  ![(fig7-4)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%207-4.png)
+
+  - 완전 연결 신경망에는 가중치 매개변수와 편향이 존재하는데 CNN에서의 필터의 매개변수가 그동안의 가중치에 해당한다 
+
+   ![(fig7-5)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%207-5.png)
+
+   - 그림 7-5 와 같이 편향은 필터를 적용한 후의 데이터에 더해진다. 그리고 편향은 하나 1x1 만 ㅈ본재한다.
+
+
+   ### 7.2.3 패딩
+
+   - 합성곱 연산을 수행하기 전에 입력 데이터 주변을 특정값 으로 채우기도 한다 이를 패딩이라고 한다.
+
+   - 그림 7-6은 4,4 크기의 입력 데이터에 폭이 1인 패딩을 적용한 모습이다.
+
+    ![(fig7-6)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%207-6.png)
+
+   ### 7.2.4 스트라이드
+
+   - 필터를 적용하는 위치의 간격을 스트라이드 라고 한다.
+
+   - 지금까지 본 예는 모두 스트라이드가 1이지만 2로하면 필터를 적용하는 윈도우가 두칸씩 이동한다
+
+    ![(fig7-7)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%207-7.png)
