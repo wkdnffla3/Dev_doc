@@ -104,3 +104,7 @@
    - 이걸 식으로 나타내면 다음과 같이 나타낼수 있다.
 
 ![(E7-1)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%207.1.png)
+
+- 입력 크기를 H,W 필터 크기를 FH,FW 출력 크기를 OH,OW 패딩을 P 스트라이드를 S 라하면 출력크기가 위 식처럼 나온다.
+
+![alt text](image.png)
