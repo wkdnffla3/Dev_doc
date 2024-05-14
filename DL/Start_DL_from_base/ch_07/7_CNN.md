@@ -98,3 +98,9 @@
    - 지금까지 본 예는 모두 스트라이드가 1이지만 2로하면 필터를 적용하는 윈도우가 두칸씩 이동한다
 
     ![(fig7-7)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%207-7.png)
+
+   - 스트라이드를 하면 출력 크기가 작아진다.
+
+   - 이걸 식으로 나타내면 다음과 같이 나타낼수 있다.
+
+![(E7-1)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/e%207.1.png)
