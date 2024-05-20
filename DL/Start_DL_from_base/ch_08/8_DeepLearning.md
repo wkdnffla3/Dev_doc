@@ -66,3 +66,18 @@
  - 층을 깊게 하는 것이 왜 중요한가에 대한 이론적인 근거는 아직 부족한것이 많다.
 
  - 층을 깊게하는 중요성에 대해서 설명을 한다.
+
+ - 층을 깊게 하는 것의 중요성은 ILSVRC로 대표되는 대규모 이미지 인식 대회의 결과에서 파악할 수 있다.
+
+ - 상위 성과를 낸 기법 대부분은 딥러닝 기반이며 그 경향은 신경망을 더 깊게 만드는 방향을 가고있다.
+
+ ![(fig8-5)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%208-5.png) 
+
+ - 그림 8-5는 5x5 필터로 구성된 합성곱 계층이다.
+
+ ![(fig8-6)](../deep-learning-from-scratch-master/deep-learning-from-scratch-master/equations_and_figures/deep_learning_images/fig%208-6.png)
+
+ - 그림 8-6은 3X3 필터로 구성된 합성곱 계층이다.
+
+ - 3x3 두번 거친 크기와 5x5 한번 거친 크기와 같다.
+
