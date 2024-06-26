@@ -251,5 +251,43 @@
 
 ![그림 1-13](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-13.png)
 
+### 1.3.2 미분과 기울기
+
+- 신경망 학습의 목표는 손실을 최소화 하는 매개변수를 찾는것이다.
+
+- 이떄 중요한 것이 미분과 기울기 이다.
 
 
+
+![식 1-9](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/e%201-9.png)
+
+![식 1-10](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/e%201-10.png)
+
+
+### 1.3.3 연쇄 법칙
+
+- 학습 시 신경망은 학습 데이터를 주면 손실을 출력한다.
+
+- 우리가 얻고 싶은 것은 각 매개변수에 대한 손실의 기울기 이다.
+
+- 신경망의 기울기는 오차 역전파 법으로 구할수 있다.
+- 오차 역 전파법을 이해하는 열쇠는 연쇄 법칙이다.
+- 연쇄 법칙이란 합성 함수에 대한 미분 법칙이다.
+
+### 1.3.4 계산 그래프
+
+- 오차 역전파법을 설명하기 전에 계산 그래프 부터 설명한다.
+
+
+![그림 1-15](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-15.png)
+
+![그림 1-17](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-16.png)
+
+
+![그림 1-18](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-18.png)
+
+![그림 1-19](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-19.png)
+
+![그림 1-20](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-20.png)
+
+![그림 1-21](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/fig%201-21.png)
