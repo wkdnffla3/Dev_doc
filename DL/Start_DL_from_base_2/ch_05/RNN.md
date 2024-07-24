@@ -29,4 +29,20 @@
 
 -  위 그림은 왼쪽 단어 두개만을 맥락으로 생각한다 그러면 CBOW 모델이 출력할 확률은 식 5-2처럼 된다.
 
-![그림 5-2](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/e%205-2.png)
+![식 5-2](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/e%205-2.png)
+
+- 식 5-2의 표기를 사용하면 CBOW 모델이 다루는 손실 함수를 식 5-3처럼 쓸수 있다.
+
+![식 5-3](../DLFromScratch2-master/equations_and_figures_2/deep_learning_2_images/e%205-3.png)
+
+- 식 5-3은 교차 엔트로피 오차에 의해 유도한 결과이다.
+- 위 식의 손실함수를 최소화하는 가중치 매개변수를 찾는다.
+
+- 맥락으로부터 타깃을 추측하는 것을 쓰기위해 언어 모델이 등장한다.
+
+### 5.1.2 언어모델
+
+- 언어 모델은 단어 나열에 확률을 부여한다.
+
+- 특정한 단어의 시퀀스에 대해서 그 시퀀스가 일어날 가능성이 어느 정도인지를 확률로 평가.
+
